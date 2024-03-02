@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slot 插槽</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>Slot 插槽與插槽預設值</h2>
+        <card>
+          <p>這是由外層定義的</p>
+        </card>
+        <br />
+        <card></card>
+
+        <h3>具名插槽</h3>
+        <card2>
+          <template v-slot:header>我喜歡這張卡片</template>
+          <!-- 預設請加入 default -->
+          <template v-slot:default>這是卡片 2 號</template>
+          <template v-slot:footer>這是卡片腳</template>
+        </card2>
+
+        <h3>具名插槽縮寫</h3>
+        <!-- 使用# -->
+        <card2>
+          <template #header>我喜歡這張卡片</template>
+          <!-- 預設請加入 default -->
+          <template #default>這是卡片 2 號</template>
+          <template #footer>這是卡片腳</template>
+        </card2>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {};
+        },
+        // 生命週期 (函式)
+        created() {
+          console.log(this);
+        },
+        // 方法 (物件)
+        methods: {},
+      });
+
+      app.component("card", {
+        template: `
+        <div class="card" style="width: 18rem;">
+          <div class="card-header">
+            元件 Header
+          </div>
+          <div class="card-body">
+            <slot>
+              <p>這是預設值</p>
+            </slot>
+          </div>
+          <div class="card-footer">
+            元件 Footer
+          </div>
+        </div>
+        `,
+      });
+
+      app.component("card2", {
+        template: `
+        <div class="card" style="width: 18rem;">
+          <div class="card-header">
+            <slot name="header">元件 Header</slot>
+          </div>
+          <div class="card-body">
+            <slot>這段是預設的文字</slot>
+          </div>
+          <div class="card-footer">
+            <slot name="footer">元件 Footer</slot>
+          </div>
+        </div> 
+        `,
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

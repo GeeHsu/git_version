@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slot Props 插巢傳遞資料狀態</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>Slot Props 插巢傳遞資料狀態</h2>
+        <h3>插槽 Prop</h3>
+        <p>將元件內的變數取出使用，稱為 slot prop</p>
+        <card>
+          <template v-slot:default="slotProps">
+            我想取出元件的值來使用
+            <hr />
+            {{ slotProps }}
+            <hr />
+            {{ slotProps.product }}
+            <hr />
+            {{ slotProps.product.name }}
+          </template>
+        </card>
+        <hr />
+        <h2>多個 { 解構 }</h2>
+        {{ product }}
+        <card2 :product="product">
+          <template #header> 買早餐 </template>
+          <template #default="{ product, veganName }">
+            {{ product }}
+            <hr />
+            {{ veganName }}
+          </template>
+        </card2>
+
+        <br />
+
+        <!-- 由內往外傳出的時候少傳出一個變數，可以為外層這個變數給予一個預設值 -->
+        <card3 :product="product">
+          <template #header>買早餐</template>
+          <template #default="{ product, veganName='是素非素' }">
+            {{ product }}
+            <hr />
+            {{ veganName }}
+          </template>
+        </card3>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {
+            product: {
+              name: "蛋餅",
+              price: 30,
+              vegan: false,
+            },
+          };
+        },
+      });
+
+      app.component("card", {
+        data() {
+          return {
+            product: {
+              name: "蛋餅",
+              price: 30,
+              vegan: false,
+            },
+          };
+        },
+        template: `
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <slot :product="product"></slot>
+          </div>
+        </div>
+        `,
+      });
+
+      app.component("card2", {
+        props: ["product"],
+        data() {
+          return {
+            veganName: "",
+          };
+        },
+        created() {
+          this.veganName = this.product.vegan ? "素食" : "非素食";
+        },
+        template: `
+        <div class="card" style="width: 18rem;">
+          <div class="card-header">
+            <slot name="header"></slot>
+          </div>
+          <div class="card-body">
+            <slot :product="product" :veganName="veganName"></slot>
+          </div>
+        </div>  
+        `,
+      });
+
+      app.component("card3", {
+        props: ["product"],
+        data() {
+          return {
+            veganName: "",
+          };
+        },
+        created() {
+          this.veganName = this.product.vegan ? "素食" : "非素食";
+        },
+        // 由內往外傳出的時候少傳出一個變數，可以為外層這個變數給予一個預設值
+        template: `
+        <div class="card" style="width: 18rem;">
+          <div class="card-header">
+            <slot name="header"></slot>
+          </div>
+          <div class="card-body">
+            <slot :product="product"></slot>
+          </div>
+        </div>  
+        `,
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

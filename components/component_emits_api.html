@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emits 驗證</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>Emits 驗證</h2>
+        <h3>Emits API</h3>
+        {{ num }}
+        <button-counter @add="addNum"></button-counter>
+
+        <h3>驗證資料內容</h3>
+        <button-counter2 @add="addNum"></button-counter2>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {
+            num: 0,
+          };
+        },
+        // 方法 (物件)
+        methods: {
+          addNum(num) {
+            this.num = this.num + num;
+          },
+        },
+      });
+
+      app.component("button-counter", {
+        data() {
+          return {
+            num: 1,
+          };
+        },
+        emits: ["add"],
+        // 主要會出現在該值是由 data 定義，但難以追蹤他的變化時會出現
+        template: `
+        <button type="button" @click="num++">調整 num 的值</button>
+        <button type="button" @click="$emit('add', num)">add</button>
+        `,
+      });
+
+      app.component("button-counter2", {
+        emits: {
+          add: (num) => {
+            if (typeof num !== "number") {
+              console.warn("add 事件參數型別需為 number");
+            }
+            return typeof num === "number";
+          },
+        },
+        template: `
+        <button type="button" @click="$emit('add', '1')">Emit 驗證是否為數值</button>
+        `,
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
