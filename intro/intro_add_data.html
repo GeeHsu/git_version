@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>將資料加入於 Vue Data</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>將資料加入於 Vue Data</h2>
+        <form>
+          <!-- 產品名稱 -->
+          <div class="mb-3">
+            <label for="productName" class="form-label">產品名稱</label>
+            <input
+              type="text"
+              id="productName"
+              class="form-control"
+              v-model="temp.name"
+            />
+          </div>
+          <!-- 產品圖片 -->
+          <div class="mb-3">
+            <!-- 使用 v-bind 綁定 html 屬性 -->
+            <img
+              :src="temp.imageUrl"
+              class="img-fluid d-block"
+              alt=""
+              width="300"
+            />
+            <label for="productImage" class="form-label">產品圖片</label>
+            <input
+              type="text"
+              id="productImage"
+              class="form-control"
+              v-model="temp.imageUrl"
+            />
+          </div>
+          <!-- 使用 v-on 方法 click 事件 -->
+          <button
+            type="button"
+            class="btn btn-secondary"
+            v-on:click="confirmEdit"
+          >
+            更新
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const products = [
+        {
+          id: "1",
+          imageUrl:
+            "https://images.unsplash.com/photo-1516906571665-49af58989c4e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=300&q=80",
+          name: "MacBook Pro",
+          onStock: false,
+        },
+        {
+          id: "2",
+          imageUrl:
+            "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
+          name: "iPhone",
+          onStock: false,
+        },
+      ];
+
+      const app = {
+        // 資料 (函式)
+        data() {
+          return {
+            // 新增資料格式
+            temp: {
+              name: "筆電",
+              imageUrl:
+                "https://images.unsplash.com/photo-1602526430780-782d6b1783fa?ixid=MXwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+            },
+            // 定義新的 products 資料
+            products: [],
+          };
+        },
+        // 方法 (物件)
+        methods: {
+          confirmEdit() {
+            // 取得 temp 資料
+            console.log(this.temp);
+            // 增加 temp 資料內容 - id, onStock
+            // 使用 unix timestamp 為了便於產生唯一值
+            this.temp.id = new Date().getTime(); //unix timestamp
+            this.temp.onStock = false;
+            // 使用 console 查詢 temp 資料
+            console.log(this.temp);
+            // products 加上 temp 的內容
+            this.products.push(this.temp); // 把 temp 加入到 products
+            // 把 temp 清空
+            this.temp = {};
+          },
+        },
+        // 生命週期 (函式)
+        created() {
+          console.log(this);
+          // 元件生成的時候執行這段函式
+          // 左邊的 products 是資料 (函式) data() 所定義的 products
+          // 右邊的 products 是外部所定義的 products
+          this.products = products;
+        },
+      };
+
+      Vue.createApp(app).mount("#app");
+    </script>
+  </body>
+</html>
