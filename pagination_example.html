@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Make Pagination Page</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>Make Pagination Page</h2>
+        <h3>Rest api pagination</h3>
+        <ul class="list-group">
+          <!-- AND NOW LOOP DATA FROM API -->
+          <li v-for="post in VisiblePost" :key="post.id">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.description }}</p>
+          </li>
+        </ul>
+
+        <!-- AND NOW CREATE BUTTON PAGINATION HERE -->
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center mt-4">
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="#"
+                @click="changePage(currentPage - 1)"
+                :disabled="currentPage === 1"
+                >Previous</a
+              >
+            </li>
+
+            <!-- AND FOR MIDDLE NUMBER PAGINATION AND ... -->
+            <li
+              class="page-item"
+              v-for="pageNumber in visiblePageNumbers"
+              :key="pageNumber"
+              :class="{ active: currentPage == pageNumber || PageNumber === '...' }"
+            >
+              <a class="page-link" href="#" @click="changePage(pageNumber)">
+                {{ pageNumber }}
+              </a>
+            </li>
+
+            <!-- AND FOR NEXT BUTTON -->
+            <li class="page-item">
+              <a
+                class="page-link"
+                href="#"
+                @click="changePage(currentPage + 1)"
+                :disabled="currentPage === 1"
+                >Next</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {
+            posts: [],
+            // AND SET YOU ITEM PER PAGE YOU SHOW
+            itemPerpage: 3,
+            currentPage: 1,
+          };
+        },
+        // 生命週期 (函式)
+        created() {
+          console.log(this);
+        },
+        computed: {
+          VisiblePost() {
+            // AND NOW CREATE STARTPAGE AND ENDPAGE
+            const startPage = (this.currentPage - 1) * this.itemPerpage;
+            // AND END PAGE
+            const endPage = startPage + this.itemPerpage;
+            return this.posts.slice(startPage, endPage);
+          },
+          // AND NOW CALCULATE TOTAL PAGES
+          totalPages() {
+            return Math.ceil(this.posts.length / this.itemPerpage);
+          },
+          // AND THIS FOR CREATE BUTTON NUMBER
+          // I CAN SET 3 PAGE IN START AND 2 PAGE IN END
+          // THEN IN MIDLE WILL BE ...
+          visiblePageNumbers() {
+            let pageNumbers = [];
+            if (this.totalPages <= 7) {
+              for (let i = 1; i <= this.totalPages; i++) {
+                pageNumbers.push(i);
+              }
+            } else {
+              if (this.currentPage <= 4) {
+                // NOW DEFINE 5 BUTTON NUMBER IN START
+                pageNumbers = [1, 2, 3, 4, 5, "...", this.totalPages];
+              } else if (this.currentPage >= this.totalPages - 3) {
+                // AND IF YOU CLICK ...
+                // THEN SHOW NUMBER BETWEEN 3 BUTTON
+                // JUST YOU CLICK ...
+                pageNumbers = [
+                  1,
+                  "...",
+                  this.totalPages - 4,
+                  this.totalPages - 3,
+                  this.totalPages - 2,
+                  this.totalPages - 1,
+                  this.totalPages,
+                ];
+              } else {
+                pageNumbers = [
+                  1,
+                  "...",
+                  this.currentPage - 1,
+                  this.currentPage,
+                  this.currentPage + 1,
+                  "...",
+                  this.totalPages,
+                ];
+              }
+            }
+            return pageNumbers;
+          },
+        },
+        // 方法 (物件)
+        methods: {
+          fetchposts() {
+            fetch("https://fakestoreapi.com/products")
+              .then((response) => response.json())
+              .then((data) => {
+                this.posts = data;
+              });
+          },
+          // AND IF CHANGE PAGE
+          changePage(page) {
+            if (page >= 1 && page <= this.totalPages) {
+              this.currentPage = page;
+            }
+          },
+        },
+        mounted() {
+          this.fetchposts();
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

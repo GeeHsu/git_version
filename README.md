@@ -1,4 +1,4 @@
 # git_version
 
 練習 Git 版本控制
-ch4 - components
+eg - 範例、參考、練習
