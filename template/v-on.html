@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>事件觸發 v-on</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style>
+      .box {
+        background-color: var(--bs-light);
+        border: 1px solid var(--bs-gray);
+        width: 80px;
+        height: 80px;
+      }
+      .box {
+        transition: all 0.5s;
+      }
+      .box.rotate {
+        transform: rotate(45deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>事件觸發 v-on</h2>
+        <!-- v-on, methods 之間綁定的介紹 -->
+
+        <h3>觸發事件 與 縮寫*</h3>
+        <div class="box" :class="{ rotate: isTransform}"></div>
+        <hr />
+        <!-- v-on:DOM事件="" -->
+        <!-- v-on 縮寫 @DOM事件 -->
+        <button class="btn btn-outline-primary" v-on:click="changeClass">
+          選轉物件
+        </button>
+        <br />
+        <h3>帶入參數*</h3>
+        <div class="box" :class="{ rotate: isTransform }"></div>
+        <hr />
+        <button
+          class="btn btn-outline-primary"
+          v-on:click="change('isTransform')"
+        >
+          選轉物件
+        </button>
+
+        <hr />
+        <h3>原生 DOM 事件</h3>
+        <!-- https://developer.mozilla.org/en-US/docs/Web/Events -->
+        <h4>input change 事件</h4>
+        <input type="text" @change="onChange" />
+        <br /><br />
+        <h4>form submit 事件</h4>
+        <!-- 是寫在 form 標籤 -->
+        <!-- 表單會有預設事件，使用 .prevent 移除原生 html 事件 -->
+        <form @submit.prevent="submitForm">
+          <input type="text" v-model="name" />
+          <button>送出表單</button>
+        </form>
+        <hr />
+        <!-- 動態事件跟動態屬性使用方式相似 -->
+        <h3>動態事件 []</h3>
+        <input type="text" @[event]="dynamicEvent" />
+        <input type="text" v-model="event" />
+
+        <hr />
+        <h3>動態物件方法 {}</h3>
+        <!-- 此方法無法傳入參數 -->
+        <!-- 物件前方插入 DOM 事件方法，後面再把 methods 帶進去 -->
+        <button
+          class="box"
+          @="{
+            mousedown: down,
+            mouseup: up
+        }"
+        ></button>
+        <hr />
+        <h3>作為運算*</h3>
+        {{ double }}
+        <input type="number" v-model.number="num" />
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const app = {
+        // 資料 (函式)
+        data() {
+          return {
+            name: "小田",
+            isTransform: true,
+            num: 10,
+            event: "click",
+          };
+        },
+        // 生命週期 (函式)
+        created() {
+          console.log(this);
+        },
+        // 方法 (物件)
+        methods: {
+          changeClass() {
+            this.isTransform = !this.isTransform;
+          },
+          change(key) {
+            // console.log(key);
+            this[key] = !this[key];
+          },
+          onChange(evt) {
+            console.log(evt);
+          },
+          submitForm() {
+            console.log("表單已送出", `name 為 ${this.name}`);
+          },
+          dynamicEvent() {
+            console.log("這是一個動態事件", this.event);
+          },
+          down() {
+            console.log("按下");
+          },
+          up() {
+            console.log("放開");
+          },
+          double(n) {
+            return `NT$ ${n * 2}`;
+          },
+        },
+      };
+
+      Vue.createApp(app).mount("#app");
+    </script>
+  </body>
+</html>

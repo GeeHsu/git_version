@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>條件判斷 v-if</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>條件判斷 v-if</h2>
+
+        <!-- v-if 判斷 html 節點是否呈現 -->
+        <h3>v-if</h3>
+        <p v-if="isFull">小明 飽了</p>
+        <p v-else>小明 還沒吃飽</p>
+        <!-- {{ isFull }} -->
+        <button type="button" v-on:click="change('isFull')">狀態切換</button>
+
+        <hr />
+        <h3>v-else-if</h3>
+        <nav class="nav nav-pills nav-fill">
+          <a
+            class="nav-link"
+            href="#"
+            v-bind:class="{ 'active': link === '小明' }"
+            v-on:click="link = '小明'"
+            >小明</a
+          >
+          <a
+            class="nav-link"
+            href="#"
+            v-bind:class="{ 'active': link === '小美'}"
+            v-on:click="link = '小美'"
+            >小美</a
+          >
+          <a
+            class="nav-link"
+            href="#"
+            v-bind:class="{ 'active': link === '杰倫'}"
+            v-on:click="link = '杰倫'"
+            >杰倫</a
+          >
+        </nav>
+        <div>
+          <!-- {{ link }} -->
+          <div v-if="link === '小明'">小明吃早餐</div>
+          <div v-else-if="link === '小美'">小美去百貨公司</div>
+          <div v-else-if="link === '杰倫'">杰倫去幫助人</div>
+        </div>
+
+        <hr />
+        <h3>注意事項:v-for 與 v-if 混用</h3>
+        <ul>
+          <template v-for="(item, key) in products" v-bind:key="item.name">
+            <li v-if="item.price <= 35">
+              {{ item.name }} / {{ item.price }} 元
+            </li>
+          </template>
+        </ul>
+        <p>
+          參考說明：<a
+            href="https://vue3js.cn/docs/zh/guide/conditional.html#v-if-%E4%B8%8E-v-for-%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8"
+            >https://vue3js.cn/docs/zh/guide/conditional.html#v-if-%E4%B8%8E-v-for-%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8</a
+          >
+        </p>
+
+        <hr />
+        <h3>v-if 與 v-show</h3>
+        <!-- v-if 狀態切換 false 時直接把 DOM 元素移除 -->
+        <p v-if="isFull">小明 飽了</p>
+        <!-- v-show 狀態切換 false 時是畫面隱藏 -->
+        <p v-show="isFull">小明 飽了</p>
+        <button type="button" v-on:click="change('isFull')">狀態切換</button>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const app = {
+        // 資料 (函式)
+        data() {
+          return {
+            name: "小明",
+            isFull: true,
+            link: "小明",
+            products: [
+              {
+                name: "蛋餅",
+                price: 30,
+                vegan: false,
+              },
+              {
+                name: "飯糰",
+                price: 35,
+                vegan: false,
+              },
+              {
+                name: "小籠包",
+                price: 60,
+                vegan: false,
+              },
+              {
+                name: "蘿蔔糕",
+                price: 30,
+                vegan: true,
+              },
+            ],
+            productsObj: {
+              chineseOmelette: {
+                name: "蛋餅",
+                price: 30,
+                vegan: false,
+              },
+              riceBall: {
+                name: "飯糰",
+                price: 35,
+                vegan: false,
+              },
+              soupDumpling: {
+                name: "小籠包",
+                price: 60,
+                vegan: false,
+              },
+              radishCake: {
+                name: "蘿蔔糕",
+                price: 30,
+                vegan: true,
+              },
+            },
+          };
+        },
+        // 生命週期 (函式)
+        created() {
+          console.log(this);
+        },
+        // 方法 (物件)
+        methods: {
+          // 切換資料集狀態 true, false
+          change: function (key) {
+            this[key] = !this[key];
+          },
+        },
+      };
+
+      Vue.createApp(app).mount("#app");
+    </script>
+  </body>
+</html>
