@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>練習: Options API 章節作業</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style>
+      #app {
+        height: 600px;
+      }
+
+      .option {
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 
+      作業流程
+      1. 使用生命週期取得遠端資料
+      2. 點擊時，呈現右邊的區塊
+      3. 搭配 Google Map 的 iframe 直接呈現位置
+      4. 使用 computed 的技巧，製作過濾功能
+      5. 使用 watch，製作瀏覽紀錄 (數量不超過十筆)
+    -->
+    <div id="app">
+      <div class="container py-5">
+        <h2 class="mb-3">練習: Options API 章節作業</h2>
+        <div class="row h-100">
+          <div class="col-md-3 h-100 d-flex flex-column">
+            <div class="form-floating mb-2">
+              <input type="search" class="form-control" id="search" placeholder="search" v-model="cacheSearch">
+              <label for="search">search</label>
+            </div>
+            <div class="list-group option">
+              <!-- datastore 改成 filterSearch -->
+              <!-- 'data' 改成 filter -->
+              <label class="list-group-item" v-for="(item, key) in filterSearch" :key="'filter' + key">
+                <input class="form-check-input me-1" type="radio" :value="item" name="area" @click="getArea(item)" :checked="cacheArea.Name === item.Name">
+                {{ item.Name }}
+              </label>
+            </div>
+          </div>
+          <div class="col-md-8 h-100 d-flex flex-column">
+            <div class="form-floating">
+              <select id="cacheArea" class="form-select w-50 mb-2" aria-label="select example" v-model="cacheArea">
+                <option selected value="" disabled>瀏覽紀錄</option>
+                <option v-for="(item, key) in browseLog" :value="item">{{ key + 1 }}. {{ item.Name }}</option>
+              </select>
+              <label for="cacheArea">瀏覽紀錄</label>
+            </div>
+            <div class="card overflow-auto">
+              <!-- v-if、v-else -->
+              <div v-if="cacheArea.Name">
+                <img :src="cacheArea.Picture1" class="card-img-top" :alt="cacheArea.Name">
+                <iframe width="100%" height="300" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                        :src=`https://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q=${cacheArea.Py},${cacheArea.Px}(${cacheArea.Name})&z=16&output=embed`></iframe>
+                <div class="card-body">
+                  <h5 class="card-title">{{ cacheArea.Name }}</h5>
+                  <p>{{ cacheArea.Description }}</p>
+                </div>
+              </div>
+              <div v-else class="card-body">
+                請選擇地方
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Axios CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+
+    <script>
+      const app = {
+        // 資料 (函式)
+        data() {
+          return {
+            // datastore 物件改成陣列
+            datastore: [],
+            cacheArea: "",
+            cacheSearch: "",
+            browseLog: [],
+          };
+        },
+        // 生命週期 (函式)
+        created() {
+          console.log(this);
+          this.getData();
+        },
+        // 方法 (物件)
+        methods: {
+          getData() {
+            const apiUrl = 'https://raw.githubusercontent.com/hexschool/KCGTravel/master/datastore_search.json';
+
+            axios.get(apiUrl).then((res) => {
+              console.log(res, '抓取資料成功');
+              this.datastore = res.data.result.records;
+              // console.log(this.datastore);
+            }).catch((err) => {
+              console.log(err, '抓取資料失敗');
+            })
+          },
+          getArea(area) {
+            console.log(area, '取得地點');
+            this.cacheArea = area;
+          }
+        },
+        computed: {
+          filterSearch() {
+            return this.datastore.filter((item) => item.Name.match(this.cacheSearch));
+          }
+        },
+        watch: {
+          cacheArea() {
+            if (this.browseLog.length < 10) {
+              this.browseLog.push(this.cacheArea);
+            } else {
+              this.browseLog.shift();
+              this.browseLog.push(this.cacheArea);
+            }
+          }
+        }
+      };
+
+      Vue.createApp(app).mount("#app");
+    </script>
+  </body>
+</html>
