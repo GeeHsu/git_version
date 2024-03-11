@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>元件章節練習</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>元件章節練習</h2>
+        <div class="row" id="content">
+          <card :card-url="displayData"></card>
+        </div>
+        <div class="d-flex justify-content-center mt-4">
+          <pagination
+            :current-page="currentPage"
+            :total-pages="totalPages"
+            @emit-pagination="changePage"
+          ></pagination>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {
+            actorData: [],
+            displayData: [],
+            perPage: 2,
+            currentPage: 1,
+            totalPages: 0,
+          };
+        },
+        // 生命週期 (函式)
+        created() {
+          this.getData();
+          this.pagination();
+          this.updateData();
+        },
+        // 方法 (物件)
+        methods: {
+          getData() {
+            const jsonData = [
+              {
+                name: "田曦薇",
+                gender: "女",
+              },
+              {
+                name: "虞書欣",
+                gender: "女",
+              },
+              {
+                name: "王鶴棣",
+                gender: "男",
+              },
+              {
+                name: "林一",
+                gender: "男",
+              },
+              {
+                name: "劉浩存",
+                gender: "女",
+              },
+              {
+                name: "陳星旭",
+                gender: "男",
+              },
+              {
+                name: "章若楠",
+                gender: "女",
+              },
+            ];
+
+            this.actorData = jsonData;
+          },
+          pagination() {
+            const dataTotal = this.actorData.length;
+            console.log(dataTotal);
+            this.totalPages = Math.ceil(dataTotal / this.perPage);
+          },
+          changePage(page) {
+            this.currentPage = page;
+            this.updateData();
+          },
+          updateData() {
+            const start = (this.currentPage - 1) * this.perPage;
+            const end = start + this.perPage;
+            this.displayData = this.actorData.slice(start, end);
+          },
+        },
+      });
+
+      // 卡片元件
+      app.component("card", {
+        props: ["cardUrl"],
+        template: `
+        <div class="col-md-6 py-2" v-for="item in cardUrl">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ item.name }}</h5>
+              <h6 class="card-subtitle mb-2 text-body-secondary">
+                {{ item.gender }}
+              </h6>
+            </div>
+          </div>
+        </div>
+        `,
+      });
+
+      // 分頁元件
+      app.component("pagination", {
+        props: ["currentPage", "totalPages"],
+        methods: {
+          changePage(page) {
+            this.$emit("emit-pagination", page);
+          },
+        },
+        template: `
+        <nav aria-label="Page navigation example">
+          <ul class="pagination" id="pageid">
+            <li class="page-item">
+              <a
+                href="#"
+                @click="changePage(currentPage - 1)"
+                :class="{ disabled: currentPage === 1 }"
+                class="page-link"
+                >Previous</a
+              >
+            </li>
+            <!--當被點擊時changePage會等於被點擊到的值-->
+            <li class="page-item" v-for="i in totalPages" :key="i">
+              <a
+                href="#"
+                class="page-link"
+                :class="{ active: currentPage === i }"
+                @click="changePage(i)"
+                >{{i}}</a
+              >
+            </li>
+            <!--當cardsPage小於totalPages時，被點擊可以將頁碼加1-->
+            <li class="page-item">
+              <a
+                href="#"
+                class="page-link"
+                @click="changePage(currentPage + 1)"
+                :class="{ disabled: currentPage === totalPages }"
+                >Next</a
+              >
+            </li>
+          </ul>
+        </nav>
+        `,
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
