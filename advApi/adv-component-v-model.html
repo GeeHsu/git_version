@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>元件直接加入 v-model</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>元件直接加入 v-model</h2>
+        <h3>將元件內的值傳回 v-model（update:modelValue）</h3>
+        <p>
+          參考說明：<a
+            href="https://vue3js.cn/docs/zh/guide/component-custom-events.html#v-model-%E5%8F%82%E6%95%B0"
+            >https://vue3js.cn/docs/zh/guide/component-custom-events.html#v-model-%E5%8F%82%E6%95%B0</a
+          >
+        </p>
+        {{ name }}
+        <!-- 1. v-model:text="name" -->
+        <custom-input v-model:text="name"></custom-input>
+
+        <hr />
+        <h2>多個 v-model</h2>
+        {{ text }} {{ text2 }}
+        <!-- 1. v-model:t1="text"、v-model:t2="text2 -->
+        <custom-input2 v-model:t1="text" v-model:t2="text2"></custom-input2>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {
+            name: "小明",
+
+            text: "這是文字片段 1",
+            text2: "這是文字片段 2",
+          };
+        },
+      });
+
+      // $emit('update:text', $event.target.value) 搭配 props，可以將更新後的值寫回 v-model 內
+      app.component("custom-input", {
+        props: ["text"],
+        // 2-1. :value="text"
+        // 2-2. @input="$emit('update:text', $event.target.value)"
+        template: `
+        <input type="text" 
+        :value="text" 
+        @input="$emit('update:text', $event.target.value)"
+        class="form-control">
+        `,
+      });
+
+      app.component("custom-input2", {
+        props: ["t1", "t2"],
+        // 2-1 :value="t1"、:value="t2"
+        // 2-2 @input="$emit('update:t1', $event.target.value)"
+        //     @input="$emit('update:t2', $event.target.value)"
+        template: `
+        <input type="text" 
+        :value="t1"
+        @input="$emit('update:t1', $event.target.value)"
+        class="form-control">
+
+        <input type="text" 
+        :value="t2" 
+        @input="$emit('update:t2', $event.target.value)"
+        class="form-control">
+        `,
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

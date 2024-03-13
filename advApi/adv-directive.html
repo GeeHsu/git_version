@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>自訂義指令 directive</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>自訂義指令 directive</h2>
+        <h2>自訂義指令</h2>
+        <h3>用途</h3>
+        <ul>
+          <li>實戰中屬於進階功能，初學可先了解有此功能即可</li>
+          <li>可從延伸套件中看到相關的運用</li>
+          <li>多用於 HTML 上的便利操作，複雜功能還是會搭配元件</li>
+        </ul>
+
+        <h3>結構</h3>
+        <ul>
+          <li>v-{自訂義名稱}</li>
+          <li>
+            主要透過生命週期來觸發變動，可參考：<a
+              href="https://vue3js.cn/docs/zh/guide/custom-directive.html#%E5%8A%A8%E6%80%81%E6%8C%87%E4%BB%A4%E5%8F%82%E6%95%B0"
+              >https://vue3js.cn/docs/zh/guide/custom-directive.html#%E5%8A%A8%E6%80%81%E6%8C%87%E4%BB%A4%E5%8F%82%E6%95%B0</a
+            >
+          </li>
+        </ul>
+        <!-- 1. v-validator -->
+        <input type="email" v-model="text" v-validator="'form-control'" />
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {
+            text: "",
+          };
+        },
+      });
+
+      // 註冊指令
+      app.directive("validator", {
+        // directive 生命週期
+        mounted(el, binding) {
+          el.focus();
+
+          // 將外部的值改為
+          console.log(binding);
+          el.className = binding.value;
+        },
+        updated: function (el, binding, vnode) {
+          // el 元素本體
+          // binding 綁定的資源狀態
+          // vnode 虛擬 DOM 節點
+          console.log("update", el, binding, vnode);
+          const className = binding.value;
+
+          // 尋找當前的 model 名稱（取得 key 值，並帶入第一個）
+          const currentModel = Object.keys(binding.instance)[0];
+          // console.log(currentModel);
+
+          // 從當前 Model 取值
+          const value = binding.instance[currentModel];
+          console.log(currentModel, value);
+
+          // Email validate
+          // 正規表達式
+          const re =
+            /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+          if (!re.test(value)) {
+            el.className = `${className} is-invalid`;
+          } else {
+            el.className = `${className} is-valid`;
+          }
+        },
+      });
+
+      app.mount("#app");
+    </script>
+
+    <script>
+      // ESM 版本的差異（需要 Webpack）
+      // import { Field, Form, ErrorMessage } from 'vee-validate';
+      //
+      // export default {
+      //   components: {
+      //     Field,
+      //     Form,
+      //     ErrorMessage,
+      //   },
+      //   methods: {
+      //     isRequired(value) {
+      //       if (value && value.trim()) {
+      //         return true;
+      //       }
+      //
+      //       return 'This is required';
+      //     },
+      //   },
+      // };
+    </script>
+  </body>
+</html>

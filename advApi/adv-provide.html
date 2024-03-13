@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>跨層級資料傳遞 provide</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>跨層級資料傳遞 provide</h2>
+        <h3>多層級資訊傳遞</h3>
+        <ul>
+          <li>在外層加入 provide</li>
+          <li>內層元件補上 inject</li>
+        </ul>
+        <card></card>
+        {{ user.name }}
+
+        <h3>注意事項: 響應式</h3>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      // 最內層
+      const userComponent = {
+        template: `
+            <div>
+              userComponent 元件：<br />
+              {{ user.name }}, <br />
+              {{ user.uuid }}
+            </div>
+          `,
+        // 2. 內層元件補上 inject
+        // 2-1. inject 是一個陣列
+        // 2-2. inject 內容加上 user 這個名稱
+        inject: ["user"],
+        created() {
+          console.log(this.user);
+
+          // 如果根元件沒有使用 function return 則不能使用響應式
+          this.user.name = "杰倫";
+        },
+      };
+
+      // 最外層
+      const app = Vue.createApp({
+        // 資料 (函式)
+        data() {
+          return {
+            user: {
+              name: "小明",
+              uuid: 78163,
+            },
+          };
+        },
+        // 1. 在外層加入 provide
+        // 1-1 函式、物件運作上有點不一樣
+        // provide: {
+        //   user: {
+        //     name: "小明",
+        //     uuid: 78163,
+        //   },
+        // },
+
+        // 注意事項: 響應式
+        // provide 物件改成函式
+        // 實戰建議直接使用函式的結構
+        provide() {
+          return {
+            user: this.user,
+          };
+        },
+      });
+
+      // 內層
+      app.component("card", {
+        data() {
+          return {
+            title: "文件標題",
+            content: "文件內文",
+            toggle: false,
+          };
+        },
+        components: {
+          userComponent,
+        },
+        inject: ["user"],
+        template: `
+          <div class="card" style="width: 18rem;">
+            <div className="card-header">card 元件</div>
+            <div class="card-body">
+              {{ user.name }}
+              <userComponent></userComponent>
+            </div>
+          </div>
+        `,
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>

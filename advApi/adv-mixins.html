@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>混合元件方法 mixins</title>
+    <!-- Bootstarp 5 CSS CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container py-5">
+        <h2>混合元件方法 mixins</h2>
+
+        <h3>單一混合、多個混合</h3>
+        <card></card>
+
+        <p>重點：</p>
+        <ul>
+          <li>可以重複混合</li>
+          <li>生命週期可以重複觸發</li>
+          <li>同名的變數、方法則會被後者覆蓋</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap 5 JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      const mixComponent1 = {
+        data() {
+          return {
+            name: "混合的元件",
+          };
+        },
+        created() {
+          console.log("混合的元件生命週期");
+        },
+      };
+      const mixComponent2 = {
+        data() {
+          return {
+            name: "混合的元件 2",
+          };
+        },
+        created() {
+          console.log("混合的元件生命週期 2");
+        },
+      };
+
+      const app = Vue.createApp({});
+
+      app.component("card", {
+        // 優先順序
+        // mixins 的優先順序是比較低的
+        // 元件本身的優先順序會是比較高的
+        data() {
+          return {
+            name: "card",
+          };
+        },
+        template: `
+          <div class="card">
+            <div class="card-body">{{ name }}</div>
+          </div>
+        `,
+        // 1-1. mixins 是一個陣列
+        // 1-2. 陣列內容把其他元件的內容混合進來
+        mixins: [mixComponent1, mixComponent2],
+        created() {
+          console.log("card 的元件生命週期");
+        },
+      });
+
+      app.mount("#app");
+    </script>
+  </body>
+</html>
