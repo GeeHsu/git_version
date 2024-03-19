@@ -32,6 +32,29 @@ const routes = [
         path: 'b',
         component: () => import('../views/ComponentB.vue'),
       },
+      // 具名視圖(命名視圖)
+      {
+        path: 'namedview',
+        component: () => import('../views/NamedView.vue'),
+        children: [
+          {
+            path: 'c2a',
+            // 載入多個元件
+            components: {
+              // 命名視圖使用名稱就是物件所使用的名稱
+              left: () => import('../views/ComponentC.vue'),
+              right: () => import('../views/ComponentA.vue'),
+            },
+          },
+          {
+            path: 'a2b',
+            components: {
+              left: () => import('../views/ComponentA.vue'),
+              right: () => import('../views/ComponentB.vue'),
+            },
+          },
+        ],
+      },
     ],
   },
 ];

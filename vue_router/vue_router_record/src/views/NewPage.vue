@@ -8,6 +8,12 @@
         <router-link to="/newpage/b" class="list-group-item list-group-item-action">
           元件 B
         </router-link>
+        <router-link to="/newpage/namedview/c2a" class="list-group-item list-group-item-action">
+          命名路由 c2a
+        </router-link>
+        <router-link to="/newpage/namedview/a2b" class="list-group-item list-group-item-action">
+          命名路由 a2b
+        </router-link>
       </div>
     </div>
     <div class="col-8">
