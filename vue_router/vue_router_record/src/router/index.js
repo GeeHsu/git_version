@@ -22,6 +22,17 @@ const routes = [
     path: '/newpage',
     name: '新增頁面',
     component: () => import('../views/NewPage.vue'),
+    children: [
+      {
+        // 子項目的路徑不用加上/
+        path: 'a',
+        component: () => import('../views/ComponentA.vue'),
+      },
+      {
+        path: 'b',
+        component: () => import('../views/ComponentB.vue'),
+      },
+    ],
   },
 ];
 
