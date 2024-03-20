@@ -37,6 +37,17 @@ const routes = [
         path: 'dynamicrouter/:id',
         component: () => import('../views/DynamicRouter.vue'),
       },
+      // 動態路由搭配 Props
+      {
+        path: 'dynamicrouterbyprops/:id',
+        component: () => import('../views/DynamicRouterByProps.vue'),
+        props: (route) => {
+          console.log('route:', route);
+          return {
+            id: route.params.id,
+          };
+        },
+      },
       // 具名視圖(命名視圖)
       {
         path: 'namedview',
