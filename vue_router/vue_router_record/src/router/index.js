@@ -32,6 +32,11 @@ const routes = [
         path: 'b',
         component: () => import('../views/ComponentB.vue'),
       },
+      // 參數 - 動態路由
+      {
+        path: 'dynamicrouter/:id',
+        component: () => import('../views/DynamicRouter.vue'),
+      },
       // 具名視圖(命名視圖)
       {
         path: 'namedview',
