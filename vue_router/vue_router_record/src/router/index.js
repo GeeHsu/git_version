@@ -95,6 +95,18 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+  linkActiveClass: 'active',
+  scrollBehavior(to, from, savedPosition) {
+    console.log(to, from, savedPosition);
+    // `to` and `from` are both route locations
+    // `savedPosition` can be null if there isn't one
+    if (to.fullPath.match('newpage')) {
+      return {
+        top: 0,
+      };
+    }
+    return {};
+  },
 });
 
 // 匯出
