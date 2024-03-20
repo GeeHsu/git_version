@@ -48,6 +48,10 @@ const routes = [
           };
         },
       },
+      {
+        path: 'routernavigation',
+        component: () => import('../views/RouterNavigation.vue'),
+      },
       // 具名視圖(命名視圖)
       {
         path: 'namedview',
