@@ -54,6 +54,13 @@ export default {
       // api 路徑, 夾帶的資料
       this.$http.post(api, this.user)
         .then((res) => {
+          // Cookie 存取
+          // 前面: 儲存 Cookie 內容; 後面: 到期日
+          // 儲存 Cookie 內容: 自定義名稱 = token 值
+          // 到期日轉成 token 可以儲存的編碼
+          const { token, expired } = res.data;
+          // console.log(token, expired);
+          document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
           console.log(res);
         });
     },
