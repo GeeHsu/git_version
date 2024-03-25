@@ -47,21 +47,26 @@ export default {
   },
   methods: {
     signIn() {
-      console.log('login');
+      // console.log('login');
       // 環境變數站點位置 + 登入的實際 API
       const api = `${process.env.VUE_APP_API}admin/signin`;
-      console.log(api);
+      // console.log(api);
       // api 路徑, 夾帶的資料
       this.$http.post(api, this.user)
         .then((res) => {
-          // Cookie 存取
-          // 前面: 儲存 Cookie 內容; 後面: 到期日
-          // 儲存 Cookie 內容: 自定義名稱 = token 值
-          // 到期日轉成 token 可以儲存的編碼
-          const { token, expired } = res.data;
-          // console.log(token, expired);
-          document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
-          console.log(res);
+          // 登入判斷 - 成功狀態
+          if (res.data.success) {
+            // Cookie 存取
+            // 前面: 儲存 Cookie 內容; 後面: 到期日
+            // 儲存 Cookie 內容: 自定義名稱 = token 值
+            // 到期日轉成 token 可以儲存的編碼
+            const { token, expired } = res.data;
+            // console.log(token, expired);
+            document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
+            // console.log(res);
+            // 登入成功會轉址到 Dashboard 頁面
+            this.$router.push('/dashboard');
+          }
         });
     },
   },
