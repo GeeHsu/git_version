@@ -65,7 +65,8 @@ export default {
             document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
             // console.log(res);
             // 登入成功會轉址到 Dashboard 頁面
-            this.$router.push('/dashboard');
+            // 改為 /dashboard/products
+            this.$router.push('/dashboard/products');
           }
         });
     },

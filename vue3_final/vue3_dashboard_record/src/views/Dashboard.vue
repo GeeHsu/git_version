@@ -1,9 +1,15 @@
 <template>
-  Dashboard
+  <Navbar></Navbar>
+  <router-view/>
 </template>
 
 <script>
+import Navbar from '../components/Navbar.vue';
+
 export default {
+  components: {
+    Navbar,
+  },
   created() {
     // 取出 token
     // test2 改寫成 hexToken
